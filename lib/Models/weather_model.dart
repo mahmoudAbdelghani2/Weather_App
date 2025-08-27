@@ -2,12 +2,15 @@ class WeatherModel {
   final String name;
   final String country;
   final String region;
-  final double tempC;
+  final int tempC;
   final String condition;
   final String icon;
-  final int humidity;
+  final double humidity;
   final double windKph;
   final String lastUpdated;
+  final double lat;
+  final double lon;
+  final double pressure;
 
   WeatherModel({
     required this.name,
@@ -19,6 +22,9 @@ class WeatherModel {
     required this.humidity,
     required this.windKph,
     required this.lastUpdated,
+    required this.lat,
+    required this.lon,
+    required this.pressure,
   });
 
   factory WeatherModel.fromJson(Map<String, dynamic> json) {
@@ -26,12 +32,15 @@ class WeatherModel {
       name: json['location']['name'] ?? '',
       country: json['location']['country'] ?? '',
       region: json['location']['region'] ?? '',
-      tempC: (json['current']['temp_c'] as num).toDouble(),
+      tempC: (json['current']['temp_c'] as num).toInt(),
       condition: json['current']['condition']['text'] ?? '',
       icon: 'https:${json['current']['condition']['icon']}',
-      humidity: json['current']['humidity'] ?? 0,
+      humidity: (json['current']['humidity'] as num).toDouble(),
       windKph: (json['current']['wind_kph'] as num).toDouble(),
       lastUpdated: json['current']['last_updated'] ?? '',
+      lat: (json['location']['lat'] as num).toDouble(),
+      lon: (json['location']['lon'] as num).toDouble(),
+      pressure: (json['current']['pressure_mb'] as num).toDouble(),
     );
   }
 
@@ -46,6 +55,9 @@ class WeatherModel {
       "humidity": humidity,
       "windKph": windKph,
       "lastUpdated": lastUpdated,
+      "lat": lat,
+      "lon": lon,
+      "pressure": pressure,
     };
   }
 
@@ -53,12 +65,15 @@ class WeatherModel {
     String? name,
     String? country,
     String? region,
-    double? tempC,
+    int? tempC,
     String? condition,
     String? icon,
-    int? humidity,
+    double? humidity,
     double? windKph,
     String? lastUpdated,
+    double? lat,
+    double? lon,
+    double? pressure,
   }) {
     return WeatherModel(
       name: name ?? this.name,
@@ -70,6 +85,9 @@ class WeatherModel {
       humidity: humidity ?? this.humidity,
       windKph: windKph ?? this.windKph,
       lastUpdated: lastUpdated ?? this.lastUpdated,
+      lat: lat ?? this.lat,
+      lon: lon ?? this.lon,
+      pressure: pressure ?? this.pressure,
     );
   }
 }

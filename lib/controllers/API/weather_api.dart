@@ -1,54 +1,42 @@
 import 'package:dio/dio.dart';
-import 'package:flutter_application_1/Models/weather_model.dart';
-import 'package:geolocator/geolocator.dart';
 
-class WeatherRepository {
-  final Dio dio = Dio();
+class WeatherApi {
   final String baseUrl = "https://api.weatherapi.com/v1/current.json";
   final String apiKey = "d2209a70879f4d068b0152158252008";
 
-  Future<Position> _getCurrentLocation() async {
-    bool serviceEnabled;
-    LocationPermission permission;
+  final Dio _dio = Dio();
 
-    serviceEnabled = await Geolocator.isLocationServiceEnabled();
-    if (!serviceEnabled) {
-      throw Exception("Location services are disabled.");
-    }
-
-    permission = await Geolocator.checkPermission();
-    if (permission == LocationPermission.denied) {
-      permission = await Geolocator.requestPermission();
-      if (permission == LocationPermission.denied) {
-        throw Exception("Location permissions are denied.");
-      }
-    }
-
-    if (permission == LocationPermission.deniedForever) {
-      throw Exception("Location permissions are permanently denied.");
-    }
-
-    return await Geolocator.getCurrentPosition(
-      // ignore: deprecated_member_use
-      desiredAccuracy: LocationAccuracy.high,
-    );
-  }
-
-  Future<WeatherModel> getWeatherByLocation() async {
+  Future<Response> fetchWeather(String? city) async {
     try {
-      final position = await _getCurrentLocation();
-
-      final response = await dio.get(
+      String? normalizedCity = city;
+      if (city != null && city.isNotEmpty) {
+        normalizedCity = city
+            .trim()
+            .toLowerCase()
+            .split(' ')
+            .map((word) {
+              if (word.isEmpty) return word;
+              return word[0].toUpperCase() + word.substring(1);
+            })
+            .join(' ');
+      }
+      final response = await _dio.get(
         baseUrl,
-        queryParameters: {
-          "key": apiKey,
-          "q": "${position.latitude},${position.longitude}",
-        },
+        queryParameters: {'key': apiKey, 'q': normalizedCity ?? "Cairo"},
       );
-
-      return WeatherModel.fromJson(response.data);
+      return response;
+    } on DioException catch (e) {
+      if (e.response != null && e.response?.statusCode == 400) {
+        throw Exception('City not found or invalid name');
+      } else if (e.type == DioExceptionType.connectionTimeout ||
+          e.type == DioExceptionType.receiveTimeout) {
+        throw Exception('Connection timeout, please try again');
+      } else if (e.type == DioExceptionType.connectionError) {
+        throw Exception('No internet connection');
+      }
+      throw Exception('Unexpected error occurred');
     } catch (e) {
-      throw Exception("Failed to load weather data: $e");
+      throw Exception('Something went wrong');
     }
   }
 }

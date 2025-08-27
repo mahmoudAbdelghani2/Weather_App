@@ -1,18 +1,38 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_application_1/Models/weather_model.dart';
 import 'package:flutter_application_1/controllers/API/weather_api.dart';
 
-class WeatherController extends ChangeNotifier{
-  WeatherModel? _weatherData;
+class WeatherController extends ChangeNotifier {
+  WeatherModel? _weather;
+  final WeatherApi _weatherApi = WeatherApi();
+  bool isLoading = false;
+  String? error;
 
-  WeatherModel? get weatherData => _weatherData;
+  WeatherModel? get weather => _weather;
 
-  Future<void> fetchWeather() async {
+  void updateWeather(WeatherModel newWeather) {
+    _weather = newWeather;
+    notifyListeners();
+  }
+
+  Future<void> fetchWeather({String? city}) async {
+    isLoading = true;
+    error = null;
+    notifyListeners();
+
     try {
-      _weatherData = await WeatherRepository().getWeatherByLocation();
-      notifyListeners();
+      final response = await _weatherApi.fetchWeather(city);
+      if (response.statusCode == 200) {
+        final weatherData = WeatherModel.fromJson(response.data);
+        updateWeather(weatherData);
+      } else {
+        throw Exception('Failed to load weather data');
+      }
     } catch (e) {
-      debugPrint("Error fetching weather data: $e");
+      error = e.toString().replaceFirst('Exception: ', '');
+    } finally {
+      isLoading = false;
+      notifyListeners();
     }
   }
 }

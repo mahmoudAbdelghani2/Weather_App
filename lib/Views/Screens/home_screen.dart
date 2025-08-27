@@ -1,8 +1,7 @@
-// ignore_for_file: deprecated_member_use
-
 import 'package:flutter/material.dart';
-import 'package:flutter_application_1/Models/weather_model.dart';
+import 'package:flutter_application_1/controllers/Themes/app_color.dart';
 import 'package:flutter_application_1/Views/Widgets/card_widget.dart';
+import 'package:flutter_application_1/controllers/Weather%20Controller/weather_controller.dart';
 import 'package:provider/provider.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -13,65 +12,98 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  final TextEditingController _searchController = TextEditingController();
+  @override
+  void initState() {
+    super.initState();
+    Provider.of<WeatherController>(context, listen: false).fetchWeather();
+  }
+
   @override
   Widget build(BuildContext context) {
-    final weatherData = Provider.of<WeatherModel>(context);
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Weather App'),
-      ),
-      body: Center(
-        child: Padding(padding: const EdgeInsets.all(16.0), child:Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: [
-            const SizedBox(height: 20),
-            _search(),
-            const SizedBox(height: 20),
-            CardWidget(weatherData: weatherData),
-          ],
-        ),)
+    final weatherController = Provider.of<WeatherController>(context);
+    final weather = weatherController.weather;
+    final isLoading = weatherController.isLoading;
+    final error = weatherController.error;
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      home: Scaffold(
+        backgroundColor: AppColor.background,
+        appBar: AppBar(
+          title: const Text(
+            'Weather App',
+            style: TextStyle(color: AppColor.whiteText),
+          ),
+          centerTitle: true,
+          backgroundColor: AppColor.background,
+        ),
+        body: SingleChildScrollView(
+          child: Form(
+            key: _formKey,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                _search(context, _searchController),
+                const SizedBox(height: 10),
+                if (isLoading)
+                  const Center(child: CircularProgressIndicator())
+                else if (error != null)
+                  Center(
+                    child: Text(
+                      error,
+                      style: const TextStyle(color: Colors.red),
+                    ),
+                  )
+                else if (weather != null)
+                  CardWidget(weather: weather)
+                else
+                  const Center(child: Text('No Weather Data')),
+              ],
+            ),
+          ),
+        ),
       ),
     );
   }
 }
-Widget _search() {
-  return TextFormField(
-    style: const TextStyle(color: Colors.white), // النص أبيض
-    decoration: InputDecoration(
-      hintText: 'Search for a city...',
-      hintStyle: TextStyle(color: Colors.white.withOpacity(0.7)),
 
-      filled: true,
-      fillColor: Colors.white.withOpacity(0.15),
-
-      prefixIcon: const Icon(Icons.search, color: Colors.white70),
-
-      border: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(30.0),
-        borderSide: BorderSide.none,
-      ),
-      enabledBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(30.0),
-        borderSide: BorderSide.none,
-      ),
-      focusedBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(30.0),
-        borderSide: const BorderSide(color: Colors.white70),
-      ),
-
-      // زرار السيرش (السهم جوه دائرة)
-      suffixIcon: Container(
-        margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 5),
-        decoration: const BoxDecoration(
-          color: Colors.white,
-          shape: BoxShape.circle,
+Widget _search(BuildContext context, TextEditingController searchController) {
+  return Padding(
+    padding: const EdgeInsets.all(8.0),
+    child: TextFormField(
+      controller: searchController,
+      style: TextStyle(color: Colors.black),
+      decoration: InputDecoration(
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.all(Radius.circular(25)),
         ),
-        child: IconButton(
-          onPressed: () {
-            // هنا هتضيف action السيرش
-          },
-          icon: const Icon(Icons.arrow_forward, color: Colors.blue),
+        hintText: 'Search for a city...',
+        prefixIcon: Icon(Icons.search),
+        suffix: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            IconButton(
+              onPressed: () {
+                Provider.of<WeatherController>(context, listen: false)
+                    .fetchWeather(city: "Cairo");
+                searchController.clear();
+              },
+              icon: Icon(Icons.update, color: AppColor.secondaryText),
+            ),
+            SizedBox(width: 10),
+            IconButton(
+              onPressed: () {
+                Provider.of<WeatherController>(context, listen: false)
+                    .fetchWeather(city: searchController.text);
+                searchController.clear();
+              },
+              icon: Icon(Icons.telegram, color: AppColor.secondaryText),
+            ),
+          ],
         ),
+        filled: true,
+        fillColor: AppColor.card,
       ),
     ),
   );

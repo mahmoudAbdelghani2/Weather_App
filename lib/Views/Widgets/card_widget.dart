@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/Models/weather_model.dart';
+import 'package:flutter_application_1/constants/condition.dart';
+import 'package:flutter_application_1/controllers/Themes/app_color.dart';
 
 class CardWidget extends StatefulWidget {
-  final WeatherModel weatherData;
-  const CardWidget({super.key, required this.weatherData});
+  final WeatherModel weather;
+  const CardWidget({super.key, required this.weather});
 
   @override
   State<CardWidget> createState() => _CardWidgetState();
@@ -12,104 +14,250 @@ class CardWidget extends StatefulWidget {
 class _CardWidgetState extends State<CardWidget> {
   @override
   Widget build(BuildContext context) {
-    final weather = widget.weatherData;
-
-    return Card(
-      // ignore: deprecated_member_use
-      color: Colors.white.withOpacity(0.15),
-      elevation: 5,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            // Location
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                const Icon(Icons.location_on, color: Colors.white70),
-                const SizedBox(width: 5),
-                Text(
-                  "${weather.name}, ${weather.country}",
-                  style: const TextStyle(
-                    fontSize: 16,
-                    color: Colors.white,
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Card(
+        elevation: 5,
+        color: AppColor.card,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+        shadowColor: AppColor.cardShadow,
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              const SizedBox(height: 15),
+              SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(Icons.location_on, color: AppColor.secondaryText),
+                    const SizedBox(width: 5),
+                    Text(
+                      ('${widget.weather.name}, '),
+                      style: TextStyle(
+                        color: AppColor.whiteText,
+                        fontSize: 30,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    Text(
+                      (widget.weather.country),
+                      style: TextStyle(
+                        color: AppColor.secondaryText,
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 10),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(
+                    Condition.weatherIcons[widget.weather.condition
+                        .toLowerCase()],
+                    color: AppColor.iconBlue,
+                  ),
+                  const SizedBox(width: 8),
+                  Text(
+                    '${widget.weather.tempC}°C',
+                    style: TextStyle(
+                      color: AppColor.whiteText,
+                      fontSize: 28,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 10),
+              Container(
+                decoration: BoxDecoration(
+                  color: Condition
+                      .weatherBackgroundColors[widget.weather.condition.toLowerCase()]!,
+                ),
+                child: Image.network(
+                  Condition.weatherIconUrls[widget.weather.condition.toLowerCase()]!,
+                  height: 60,
+                  width: 60,
+                ),
+              ),
+              const SizedBox(height: 10),
+              Text(
+                widget.weather.condition,
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  color: AppColor.secondaryText,
+                ),
+              ),
+              const SizedBox(height: 10),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Icon(Icons.thermostat, color: AppColor.secondaryText),
+                      const SizedBox(height: 3),
+                      Text(
+                        'Feels Like',
+                        style: TextStyle(
+                          color: AppColor.secondaryText,
+                          fontSize: 13,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const SizedBox(height: 3),
+                      Text(
+                        '${widget.weather.tempC + 2}°C',
+                        style: TextStyle(
+                          color: AppColor.whiteText,
+                          fontSize: 15,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(width: 35),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Icon(
+                        Icons.water_drop_rounded,
+                        color: AppColor.secondaryText,
+                      ),
+                      const SizedBox(height: 3),
+                      Text(
+                        'Humidity',
+                        style: TextStyle(
+                          color: AppColor.secondaryText,
+                          fontSize: 13,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const SizedBox(height: 3),
+                      Text(
+                        '${widget.weather.humidity}%',
+                        style: TextStyle(
+                          color: AppColor.whiteText,
+                          fontSize: 15,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(width: 35),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Icon(Icons.air, color: AppColor.secondaryText),
+                      const SizedBox(height: 3),
+                      Text(
+                        'Wind',
+                        style: TextStyle(
+                          color: AppColor.secondaryText,
+                          fontSize: 13,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const SizedBox(height: 3),
+                      Text(
+                        '${widget.weather.windKph} km/h',
+                        style: TextStyle(
+                          color: AppColor.whiteText,
+                          fontSize: 15,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+              const SizedBox(height: 10),
+              Padding(
+                padding: const EdgeInsets.all(20),
+                child: Card(
+                  color: AppColor.twoCard,
+                  elevation: 5,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Icon(Icons.speed, color: AppColor.secondaryText),
+                            const SizedBox(height: 8),
+                            Text(
+                              'Pressure',
+                              style: TextStyle(
+                                color: AppColor.secondaryText,
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            const SizedBox(height: 8),
+                            Text(
+                              '${widget.weather.pressure} mb',
+                              style: TextStyle(
+                                color: AppColor.whiteText,
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(width: 15),
+                        Text(
+                          "|",
+                          style: TextStyle(
+                            color: AppColor.whiteText,
+                            fontSize: 30,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        const SizedBox(width: 15),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Icon(Icons.update, color: AppColor.secondaryText),
+                            const SizedBox(height: 8),
+                            Text(
+                              'Last Updated',
+                              style: TextStyle(
+                                color: AppColor.secondaryText,
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            const SizedBox(height: 8),
+                            Text(
+                              'Now',
+                              style: TextStyle(
+                                color: AppColor.whiteText,
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
                   ),
                 ),
-              ],
-            ),
-            const SizedBox(height: 12),
-
-            // Temperature + Icon + Condition
-            Column(
-              children: [
-                Image.network(
-                  weather.icon,
-                  width: 48,
-                  height: 48,
-                ),
-                Text(
-                  "${weather.tempC.toStringAsFixed(0)}°C",
-                  style: const TextStyle(
-                    fontSize: 48,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
-                  ),
-                ),
-                Text(
-                  weather.condition,
-                  style: const TextStyle(
-                    fontSize: 16,
-                    color: Colors.white70,
-                  ),
-                ),
-              ],
-            ),
-
-            const SizedBox(height: 20),
-
-            // Extra info row 1
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: [
-                _buildInfoItem(Icons.thermostat, "Feels like", "${(weather.tempC + 2).toStringAsFixed(0)}°C"),
-                _buildInfoItem(Icons.water_drop, "Humidity", "${weather.humidity}%"),
-                _buildInfoItem(Icons.air, "Wind", "${weather.windKph.toStringAsFixed(0)} km/h"),
-              ],
-            ),
-            const SizedBox(height: 16),
-
-            // Extra info row 2
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: [
-                _buildInfoItem(Icons.speed, "Pressure", "1007 mb"), // لو مش في الموديل، ثابت مؤقت
-                _buildInfoItem(Icons.update, "Last updated", "Now"),
-              ],
-            ),
-          ],
+              ),
+            ],
+          ),
         ),
       ),
-    );
-  }
-
-  Widget _buildInfoItem(IconData icon, String label, String value) {
-    return Column(
-      children: [
-        Icon(icon, color: Colors.white70, size: 20),
-        const SizedBox(height: 5),
-        Text(
-          value,
-          style: const TextStyle(color: Colors.white, fontSize: 14),
-        ),
-        Text(
-          label,
-          style: const TextStyle(color: Colors.white70, fontSize: 12),
-        ),
-      ],
     );
   }
 }
