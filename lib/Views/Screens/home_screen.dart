@@ -17,7 +17,10 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
-    Provider.of<WeatherController>(context, listen: false).fetchWeather();
+    Provider.of<WeatherController>(
+      context,
+      listen: false,
+    ).fetchWeatherByLocation();
   }
 
   @override
@@ -38,27 +41,52 @@ class _HomeScreenState extends State<HomeScreen> {
           centerTitle: true,
           backgroundColor: AppColor.background,
         ),
-        body: SingleChildScrollView(
-          child: Form(
-            key: _formKey,
+        body: Form(
+          key: _formKey,
+          child: SingleChildScrollView(
             child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 _search(context, _searchController),
-                const SizedBox(height: 10),
-                if (isLoading)
-                  const Center(child: CircularProgressIndicator())
-                else if (error != null)
-                  Center(
-                    child: Text(
-                      error,
-                      style: const TextStyle(color: Colors.red),
-                    ),
-                  )
-                else if (weather != null)
-                  CardWidget(weather: weather)
-                else
-                  const Center(child: Text('No Weather Data')),
+                Expanded(
+                  child: Builder(
+                    builder: (context) {
+                      if (isLoading) {
+                        return const Center(child: CircularProgressIndicator());
+                      }
+                      if (error != null) {
+                        return Center(
+                          child: Padding(
+                            padding: const EdgeInsets.all(24.0),
+                            child: Text(
+                              error,
+                              textAlign: TextAlign.center,
+                              style: const TextStyle(
+                                color: Colors.redAccent,
+                                fontSize: 20,
+                                fontWeight: FontWeight.w700,
+                              ),
+                            ),
+                          ),
+                        );
+                      }
+                      if (weather != null) {
+                        return SingleChildScrollView(
+                          child: CardWidget(weather: weather),
+                        );
+                      }
+                      return const Center(
+                        child: Text(
+                          'No Weather Data',
+                          style: TextStyle(
+                            color: Colors.white70,
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                ),
               ],
             ),
           ),
@@ -85,8 +113,10 @@ Widget _search(BuildContext context, TextEditingController searchController) {
           children: [
             IconButton(
               onPressed: () {
-                Provider.of<WeatherController>(context, listen: false)
-                    .fetchWeather(city: "Cairo");
+                Provider.of<WeatherController>(
+                  context,
+                  listen: false,
+                ).fetchWeatherByLocation();
                 searchController.clear();
               },
               icon: Icon(Icons.update, color: AppColor.secondaryText),
@@ -94,8 +124,10 @@ Widget _search(BuildContext context, TextEditingController searchController) {
             SizedBox(width: 10),
             IconButton(
               onPressed: () {
-                Provider.of<WeatherController>(context, listen: false)
-                    .fetchWeather(city: searchController.text);
+                Provider.of<WeatherController>(
+                  context,
+                  listen: false,
+                ).fetchWeather(city: searchController.text);
                 searchController.clear();
               },
               icon: Icon(Icons.telegram, color: AppColor.secondaryText),

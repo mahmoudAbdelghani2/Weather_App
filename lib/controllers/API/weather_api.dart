@@ -6,11 +6,12 @@ class WeatherApi {
 
   final Dio _dio = Dio();
 
-  Future<Response> fetchWeather(String? city) async {
+  Future<Response> fetchWeather({String? city, double? lat, double? lon}) async {
     try {
-      String? normalizedCity = city;
+      String query;
+
       if (city != null && city.isNotEmpty) {
-        normalizedCity = city
+        String normalizedCity = city
             .trim()
             .toLowerCase()
             .split(' ')
@@ -19,10 +20,18 @@ class WeatherApi {
               return word[0].toUpperCase() + word.substring(1);
             })
             .join(' ');
+        query = normalizedCity;
+      } else if (lat != null && lon != null) {
+        query = "$lat,$lon";
+      } else {
+        query = "Cairo";
       }
       final response = await _dio.get(
         baseUrl,
-        queryParameters: {'key': apiKey, 'q': normalizedCity ?? "Cairo"},
+        queryParameters: {
+          'key': apiKey,
+          'q': query,
+        },
       );
       return response;
     } on DioException catch (e) {

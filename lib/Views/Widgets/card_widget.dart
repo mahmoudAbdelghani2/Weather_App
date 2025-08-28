@@ -1,3 +1,5 @@
+// ignore_for_file: deprecated_member_use
+
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/Models/weather_model.dart';
 import 'package:flutter_application_1/constants/condition.dart';
@@ -59,7 +61,8 @@ class _CardWidgetState extends State<CardWidget> {
                 children: [
                   Icon(
                     Condition.weatherIcons[widget.weather.condition
-                        .toLowerCase()],
+                            .toLowerCase()] ??
+                        Icons.cloud_queue,
                     color: AppColor.iconBlue,
                   ),
                   const SizedBox(width: 8),
@@ -74,17 +77,30 @@ class _CardWidgetState extends State<CardWidget> {
                 ],
               ),
               const SizedBox(height: 10),
-              Container(
-                decoration: BoxDecoration(
-                  color: Condition
-                      .weatherBackgroundColors[widget.weather.condition.toLowerCase()]!,
-                ),
-                child: Image.network(
-                  Condition.weatherIconUrls[widget.weather.condition.toLowerCase()]!,
-                  height: 60,
-                  width: 60,
-                ),
-              ),
+              Builder(builder: (context) {
+                final key = widget.weather.condition.toLowerCase();
+                final bgColor = Condition.weatherBackgroundColors[key] ??
+                    Colors.blueGrey.withOpacity(0.3);
+                final iconUrl = Condition.weatherIconUrls[key];
+                return Container(
+                  decoration: BoxDecoration(
+                    color: bgColor,
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  padding: const EdgeInsets.all(4),
+                  child: iconUrl == null
+                      ? Icon(Icons.cloud_queue, color: AppColor.whiteText)
+                      : Image.network(
+                          iconUrl,
+                          height: 60,
+                          width: 60,
+                          errorBuilder: (c, e, s) => Icon(
+                            Icons.cloud_off,
+                            color: AppColor.whiteText,
+                          ),
+                        ),
+                );
+              }),
               const SizedBox(height: 10),
               Text(
                 widget.weather.condition,

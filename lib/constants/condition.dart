@@ -49,26 +49,26 @@ class Condition {
   };
 
   static final Map<String, Color> weatherBackgroundColors = {
-    'clear': Colors.lightBlueAccent, // سماء صافية
-    'sunny': Colors.orangeAccent, // مشمس
-    'partly cloudy': Colors.blueGrey, // غائم جزئي
-    'cloudy': Colors.grey, // غائم
-    'overcast': Colors.blueGrey.shade700, // غيوم كثيفة
-    'rain': Colors.indigo, // مطر
-    'light rain': Colors.indigoAccent, // مطر خفيف
-    'heavy rain': Colors.blue.shade900, // مطر غزير
-    'thunderstorm': Colors.deepPurple, // عاصفة رعدية
-    'storm': Colors.deepPurple.shade900, // عاصفة قوية
-    'snow': Colors.blue.shade100, // ثلج
-    'fog': Colors.blueGrey.shade200, // ضباب
-    'mist': Colors.blueGrey.shade300, // شبورة
-    'haze': Colors.blueGrey.shade400, // غباش
-    'wind': Colors.teal, // رياح
-    'windy': Colors.teal.shade700, // رياح قوية
-    'dust': Colors.brown, // تراب
-    'sandstorm': Colors.brown.shade700, // عاصفة ترابية
-    'clear night': Colors.indigo.shade800, // ليل صافي
-    'cloudy night': Colors.blueGrey.shade800, // ليل غائم
-    'overcast night': Colors.black87, // ليل بغيوم كثيفة
+    'clear': Colors.lightBlueAccent,
+    'sunny': Colors.orangeAccent,
+    'partly cloudy': Colors.blueGrey,
+    'cloudy': Colors.grey,
+    'overcast': Colors.blueGrey.shade700,
+    'rain': Colors.indigo,
+    'light rain': Colors.indigoAccent,
+    'heavy rain': Colors.blue.shade900,
+    'thunderstorm': Colors.deepPurple,
+    'storm': Colors.deepPurple.shade900,
+    'snow': Colors.blue.shade100,
+    'fog': Colors.blueGrey.shade200,
+    'mist': Colors.blueGrey.shade300,
+    'haze': Colors.blueGrey.shade400,
+    'wind': Colors.teal,
+    'windy': Colors.teal.shade700,
+    'dust': Colors.brown,
+    'sandstorm': Colors.brown.shade700,
+    'clear night': Colors.indigo.shade800,
+    'cloudy night': Colors.blueGrey.shade800,
+    'overcast night': Colors.black87,
   };
 }
