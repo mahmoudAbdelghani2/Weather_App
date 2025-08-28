@@ -47,45 +47,43 @@ class _HomeScreenState extends State<HomeScreen> {
             child: Column(
               children: [
                 _search(context, _searchController),
-                Expanded(
-                  child: Builder(
-                    builder: (context) {
-                      if (isLoading) {
-                        return const Center(child: CircularProgressIndicator());
-                      }
-                      if (error != null) {
-                        return Center(
-                          child: Padding(
-                            padding: const EdgeInsets.all(24.0),
-                            child: Text(
-                              error,
-                              textAlign: TextAlign.center,
-                              style: const TextStyle(
-                                color: Colors.redAccent,
-                                fontSize: 20,
-                                fontWeight: FontWeight.w700,
-                              ),
+                Builder(
+                  builder: (context) {
+                    if (isLoading) {
+                      return const Center(child: CircularProgressIndicator());
+                    }
+                    if (error != null) {
+                      return Center(
+                        child: Padding(
+                          padding: const EdgeInsets.all(24.0),
+                          child: Text(
+                            error,
+                            textAlign: TextAlign.center,
+                            style: const TextStyle(
+                              color: Colors.redAccent,
+                              fontSize: 20,
+                              fontWeight: FontWeight.w700,
                             ),
-                          ),
-                        );
-                      }
-                      if (weather != null) {
-                        return SingleChildScrollView(
-                          child: CardWidget(weather: weather),
-                        );
-                      }
-                      return const Center(
-                        child: Text(
-                          'No Weather Data',
-                          style: TextStyle(
-                            color: Colors.white70,
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
                           ),
                         ),
                       );
-                    },
-                  ),
+                    }
+                    if (weather != null) {
+                      return SingleChildScrollView(
+                        child: CardWidget(weather: weather),
+                      );
+                    }
+                    return const Center(
+                      child: Text(
+                        'No Weather Data',
+                        style: TextStyle(
+                          color: Colors.white70,
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    );
+                  },
                 ),
               ],
             ),
